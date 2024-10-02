@@ -3,7 +3,7 @@ version: '3.9'
 services:
   mariadb:
     image: mariadb:11.5
-    container_name: mariadb
+    container_name: mariadb-symfony
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}   # Mot de passe de l'utilisateur root
@@ -19,7 +19,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginx
+    container_name: nginx-symfony
     restart: always
     ports:
       - "80:80"      # Expose le port 80
@@ -33,12 +33,24 @@ services:
       - app_network
 
   php:
-    build:
-      context: .\php
-    container_name: php
-    restart: always
+    build: ./php
+    container_name: php-symfony
     volumes:
-      - ./public:/var/www/html            # Dossier public (Symfony)
+      - ./public:/var/www/html
+    networks:
+      - app_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin_symfony
+    restart: always
+    environment:
+      PMA_HOST: mariadb               # Le nom du service MariaDB défini dans docker-compose
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}  # Le mot de passe root de MariaDB
+    ports:
+      - "8080:80"                     # Accès phpMyAdmin via localhost:8080
+    depends_on:
+      - mariadb
     networks:
       - app_network
 
