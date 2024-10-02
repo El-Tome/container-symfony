@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  mariadb:
+    image: mariadb:11.5
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}   # Mot de passe de l'utilisateur root
+      MARIADB_DATABASE: ${MARIADB_DATABASE}             # Nom de la base de données
+      MARIADB_USER: ${MARIADB_USER}                     # Nom de l'utilisateur
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}             # Mot de passe de l'utilisateur
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"      # Expose le port 80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Configuration Nginx
+      - ./public:/var/www/html:ro            # Dossier public (Symfony ou autre)
+    depends_on:
+      - mariadb
+      - php
+    networks:
+      - app_network
+
+  php:
+    build:
+      context: .\php
+    container_name: php
+    restart: always
+    volumes:
+      - ./public:/var/www/html            # Dossier public (Symfony)
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  db_data:
+    driver: local
