@@ -6,10 +6,10 @@ services:
     container_name: mariadb-symfony
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}   # Mot de passe de l'utilisateur root
-      MARIADB_DATABASE: ${MARIADB_DATABASE}             # Nom de la base de données
-      MARIADB_USER: ${MARIADB_USER}                     # Nom de l'utilisateur
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}             # Mot de passe de l'utilisateur
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}   # Root password
+      MARIADB_DATABASE: ${MARIADB_DATABASE}               # Name of the database
+      MARIADB_USER: ${MARIADB_USER}                                # Username
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}             # User password
     volumes:
       - db_data:/var/lib/mysql
     ports:
@@ -22,10 +22,10 @@ services:
     container_name: nginx-symfony
     restart: always
     ports:
-      - "80:80"      # Expose le port 80
+      - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf  # Configuration Nginx
-      - ./public:/var/www/html:ro            # Dossier public (Symfony ou autre)
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Configuration of Nginx
+      - ./public:/var/www/html:ro               # file of the project
     depends_on:
       - mariadb
       - php
@@ -45,10 +45,10 @@ services:
     container_name: phpmyadmin_symfony
     restart: always
     environment:
-      PMA_HOST: mariadb               # Le nom du service MariaDB défini dans docker-compose
-      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}  # Le mot de passe root de MariaDB
+      PMA_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}  # Root password of MariaDB
     ports:
-      - "8080:80"                     # Accès phpMyAdmin via localhost:8080
+      - "8080:80"
     depends_on:
       - mariadb
     networks:
