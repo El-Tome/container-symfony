@@ -9,7 +9,26 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
-    && docker-php-ext-install pdo_mysql
+    libicu-dev \
+    libxml2-dev \
+    libzip-dev \
+    && docker-php-ext-install \
+    intl \
+    pdo_mysql \
+    zip
 
-# Définir le répertoire de travail
+# Installer Symfony CLI pour la gestion du projet Symfony (optionnel mais utile)
+RUN curl -sS https://get.symfony.com/cli/installer | bash
+RUN mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
+
+# Installer les dépendances de Symfony et initialiser le projet
 WORKDIR /var/www/html
+
+# Copier les fichiers de l'application dans le container
+COPY . /var/www/html
+
+# Exposer le port utilisé par PHP-FPM
+EXPOSE 9000
+
+# Commande par défaut
+CMD ["php-fpm"]
