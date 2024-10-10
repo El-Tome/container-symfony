@@ -20,10 +20,20 @@ cd container-symfony
 
 Copy the `.env.example` file to `.env`.
 
-### Build the Docker Containers
+### Build the Docker Containers and start project
 
 ```sh
 docker-compose up -d --build
+```
+
+Enter in php container
+```sh
+docker exec -it php-symfony bash
+```
+
+And run
+```sh
+composer install
 ```
 
 ## Accessing the Application
@@ -45,7 +55,7 @@ docker exec -it php-symfony bash
 
 Stop the containers:
 ```sh  
-docker-compose down
+docker compose down
 ```
 
 ## Other information
