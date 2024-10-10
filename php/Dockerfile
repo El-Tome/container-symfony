@@ -1,10 +1,10 @@
-# Utiliser l'image PHP avec FPM
+# Use the PHP image with FPM
 FROM php:8.2-fpm
 
-# Installer Composer
+# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Installer des extensions PHP supplémentaires si nécessaire
+# Install additional PHP extensions if necessary
 RUN apt-get update && apt-get install -y \
     zip \
     unzip \
@@ -17,18 +17,21 @@ RUN apt-get update && apt-get install -y \
     pdo_mysql \
     zip
 
-# Installer Symfony CLI pour la gestion du projet Symfony (optionnel mais utile)
+# Install Symfony CLI (optional but useful)
 RUN curl -sS https://get.symfony.com/cli/installer | bash
 RUN mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
 
-# Installer les dépendances de Symfony et initialiser le projet
+# Set working directory
 WORKDIR /var/www/html
 
-# Copier les fichiers de l'application dans le container
-COPY . /var/www/html
+# Copy all project files into the container
+COPY public/ /var/www/html
 
-# Exposer le port utilisé par PHP-FPM
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html
+
+# Expose the port used by PHP-FPM
 EXPOSE 9000
 
-# Commande par défaut
+# Default command
 CMD ["php-fpm"]

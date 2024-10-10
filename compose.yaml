@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   mariadb:
     image: mariadb:11.5
@@ -33,10 +31,18 @@ services:
       - app_network
 
   php:
-    build: ./php
+    build:
+      context: .
+      dockerfile: ./php/Dockerfile
     container_name: php-symfony
     volumes:
       - ./public:/var/www/html
+    environment:
+      - APP_SECRET=${APP_SECRET}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
     networks:
       - app_network
 
